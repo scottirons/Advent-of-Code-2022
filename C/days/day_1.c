@@ -17,8 +17,8 @@ void day_1() {
 
     FILE* infile;
     char buffer[10];
-    long number;
     char *ptr;
+    long number;
     long running_sum = 0;
     tuple values = {0, 0, 0};
 
@@ -28,15 +28,15 @@ void day_1() {
 
         // reached a gap
         if (buffer[0] == '\n') {
-            if (running_sum > values.C) {
+            if (running_sum >= values.C) {
                 values.A = values.B;
                 values.B = values.C;
-                values.C = running_sum;
-            } else if (running_sum > values.B && running_sum < values.C) {
+                values.C = (int)running_sum;
+            } else if (running_sum >= values.B) {
                 values.A = values.B;
-                values.B = running_sum;
-            } else if (running_sum > values.A) {
-                values.A = running_sum;
+                values.B = (int)running_sum;
+            } else if (running_sum >= values.A) {
+                values.A = (int)running_sum;
             }
             running_sum = 0;
         } else {
@@ -44,7 +44,16 @@ void day_1() {
             number = strtol(buffer, &ptr, 10);
             running_sum += number;
         }
-
+    }
+    if (running_sum >= values.C) {
+        values.A = values.B;
+        values.B = values.C;
+        values.C = (int)running_sum;
+    } else if (running_sum >= values.B) {
+        values.A = values.B;
+        values.B = (int)running_sum;
+    } else if (running_sum >= values.A) {
+        values.A = (int)running_sum;
     }
     printf("Third: %ld\nSecond: %ld\nFirst: %ld\nSum: %ld", values.A, values.B, values.C, (values.C + values.B + values.A));
 
