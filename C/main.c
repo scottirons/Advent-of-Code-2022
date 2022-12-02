@@ -2,6 +2,6 @@
 #include "all_days.h"
 
 int main() {
-    day_1();
+    day_2();
     return 0;
 }
