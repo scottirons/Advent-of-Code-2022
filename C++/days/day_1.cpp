@@ -4,7 +4,6 @@
 
 #include "day_1.h"
 #include <fstream>
-#include <string>
 #include <iostream>
 #include <sstream>
 #include <numeric>

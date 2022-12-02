@@ -6,5 +6,6 @@
 #define C_ALL_DAYS_H
 
 #include "days/day_1.h"
+#include "days/day_2.h"
 
 #endif //C_ALL_DAYS_H
