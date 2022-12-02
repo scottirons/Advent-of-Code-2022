@@ -3,4 +3,4 @@ project(C++)
 
 set(CMAKE_CXX_STANDARD 23)
 
-add_executable(C++ main.cpp)
+add_executable(C++ main.cpp days/day_1.cpp days/day_1.h all_days.h)

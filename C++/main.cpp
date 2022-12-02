@@ -1,6 +1,8 @@
 #include <iostream>
+#include "all_days.h"
 
 int main() {
-    std::cout << "Hello, World!" << std::endl;
+
+    day_1();
     return 0;
 }
