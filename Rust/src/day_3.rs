@@ -14,7 +14,7 @@ pub fn solution() {
                 .map(|n| match n.cmp(&91) {
                     // lowercase
                     Ordering::Greater => n - 96,
-                    Ordering::Less => n - 64 + 26,
+                    Ordering::Less => n - 38,
                     Ordering::Equal => *n
                 })
             )
