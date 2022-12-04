@@ -46,16 +46,18 @@ void day_3() {
                 }
             }
             // part B stuff
-            // end of 3 lines
-            if (curr_line % 3 == 0 & count_arr_b[val] == 2) {
-                count_b += val;
-                for (int j = 0; j < (sizeof(count_arr_b) / sizeof(count_arr_b[0])); j++) {
-                    count_arr_b[j] = 0;
-                }
-            } else if (curr_line % 3 == 1) {            // start of new triplet
+            if (curr_line % 3 == 0) {
+                count_b += (count_arr_b[val] >> 1) * val;
+                count_arr_b[val] = 0;
+            } else if (curr_line % 3 == 1) {
                 count_arr_b[val] = 1;
-            } else if (curr_line % 3 == 2 & count_arr_b[val] == 1) {
-                count_arr_b[val] = 2;
+            } else {
+                count_arr_b[val] = (count_arr_b[val] + 1) & 2;
+            }
+        }
+        if (curr_line % 3 == 0) {
+            for (int j = 0; j < (sizeof(count_arr_b) / sizeof(count_arr_b[0])); j++) {
+                count_arr_b[j] = 0;
             }
         }
         curr_line++;
