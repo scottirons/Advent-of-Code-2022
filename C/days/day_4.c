@@ -42,5 +42,4 @@ void day_4() {
         }
     }
     printf("Part A Total: %d\nPart B Total: %d", count_a, count_b);
-
 }
