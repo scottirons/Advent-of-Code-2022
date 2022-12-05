@@ -1,7 +1,7 @@
 
 
 pub fn solution() {
-    let input = include_str!("../../inputs/day_5.txt")
+    let mut input = include_str!("../../inputs/day_5.txt")
         .split_once("\n\n")
         .map(|(a, b)|
             (a.split("\n").collect::<Vec<&str>>(),
@@ -17,6 +17,8 @@ pub fn solution() {
     for _ in 0..10 {
         stacc.push(vec![]);
     }
+
+    input.1.pop();
 
     // add values to stacc :]
     for row in input.0.iter().rev().skip(1) {
