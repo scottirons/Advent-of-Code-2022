@@ -3,7 +3,6 @@
 //
 
 #include "day_3.h"
-#include "day_2.h"
 #include <string.h>
 #include <stdio.h>
 
