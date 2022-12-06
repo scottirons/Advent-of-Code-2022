@@ -11,14 +11,12 @@ pub fn solution() {
                          .map(|m| m.parse::<i32>().unwrap())
                          .collect::<Vec<i32>>())
                  .collect::<Vec<Vec<i32>>>()))
-        .unwrap();
+        .unwrap(); input.1.pop();
 
     let mut stacc: Vec<Vec<char>> = vec![];
     for _ in 0..10 {
         stacc.push(vec![]);
     }
-
-    input.1.pop();
 
     // add values to stacc :]
     for row in input.0.iter().rev().skip(1) {
