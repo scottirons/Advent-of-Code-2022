@@ -21,16 +21,22 @@ int normalize(int n) {
 
 void day_5() {
 
+    //nobody knows what these variables mean ;')
     FILE* infile;
     char buffer[40];
     char temp[60];          // temporary stack for part b transfering
-    char temp_char;         // after pushing and popping
+    int temp_height = 0;
+    char temp_char_a;         // after pushing and popping
+    char temp_char_b;
     char stacc_a[10][60];
     char stacc_b[10][60];
     int height_a[10] = {0};
     int height_b[10] = {0};
     int row_index = 0;
     int moves[3] = {0, 0, 0};
+    int move_amt;
+    int source;
+    int destination;
     int curr_i = 0;
     int dir_index;
     int curr_pile;
@@ -40,16 +46,31 @@ void day_5() {
 
     while (fgets(buffer, sizeof(buffer), infile) != NULL) {
 
-        if (row_index < 9) {
+        if (row_index < 8) {
             for (int i = 0; i < strlen(buffer); i++) {
-                if ((i - 1) % 4 == 0) {
+                if (((i - 1) % 4 == 0) && (buffer[i] != ' ')) {
                     curr_pile = (i / 4 + 1);
                     stack_index = height_a[curr_pile];
+
                     // add value to the appropriate stack
                     stacc_a[curr_pile][stack_index] = buffer[i];
                     stacc_b[curr_pile][stack_index] = buffer[i];
                     height_a[curr_pile]++;
                     height_b[curr_pile]++;
+                }
+            }
+            // flip order of each pile ;]
+        } else if (row_index == 9) {
+            for (int j = 1; j < 10; j++) {
+                int low = 0;
+                int high = height_a[j] - 1;
+                while (high > low) {
+                    temp_char_a = stacc_a[j][high];
+                    stacc_a[j][high] = stacc_a[j][low];
+                    stacc_b[j][high] = stacc_b[j][low];
+                    stacc_a[j][low] = temp_char_a;
+                    stacc_b[j][low] = temp_char_a;
+                    high--; low++;
                 }
             }
         } else if (row_index > 9) {
@@ -58,10 +79,35 @@ void day_5() {
                     curr_i++;
                 } else if (buffer[i] == '\n') {
                     curr_i = 0;                         // reset the index
-                    // printf("%d, %d, %d\n", moves[0], moves[1], moves[2]);
+                    move_amt = moves[0];
+                    source = moves[1];
+                    destination = moves[2];
 
-                    for (int j = 0; j < moves[0]; j++) {
+                    for (int j = 0; j < move_amt; j++) {
+                        // get char from A to move over
+                        stack_index = height_a[source];
+                        temp_char_a = stacc_a[source][stack_index - 1];
 
+                        // move char from B to temp
+                        stack_index = height_b[source];
+                        temp_char_b = stacc_b[source][stack_index - 1];
+                        temp[temp_height] = temp_char_b;
+                        temp_height++;
+
+                        // decrement size of a and b
+                        height_a[source]--;
+                        height_b[source]--;
+
+                        // move character over and increment size of destination
+                        stacc_a[destination][height_a[destination]] = temp_char_a;
+                        height_a[destination]++;
+
+                    }
+                    // after adding all values to the temp, move them to destination_b
+                    while (temp_height) {
+                        stacc_b[destination][height_b[destination]] = temp[temp_height - 1];
+                        temp_height--;
+                        height_b[destination]++;
                     }
 
                     // clear moves
@@ -78,9 +124,12 @@ void day_5() {
         row_index++;
     }
 
-//    for (int i = 1; i < 10; i++) {
-//        for (int j = 0; j < height_a[i] - 1; j++) {
-//            printf("%c", stacc_a[i][j]);
-//        } printf("\n");
-//    }
+    printf("\nPart A: ");
+    for (int i = 1; i < 10; i++) {
+        printf("%c", stacc_a[i][height_a[i] - 1]);
+    } printf("\n");
+    printf("Part B: ");
+    for (int i = 1; i < 10; i++) {
+        printf("%c", stacc_b[i][height_b[i] - 1]);
+    } printf("\n");
 }
