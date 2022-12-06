@@ -6,6 +6,8 @@
 #include <stdio.h>
 #include <string.h>
 
+
+// when parsing the move command inputs, keep track of the numbers in the correct order (move amount, source, destination)
 int normalize(int n) {
     switch (n) {
         case 1:
@@ -22,23 +24,46 @@ int normalize(int n) {
 void day_5() {
 
     //nobody knows what these variables mean ;')
+    //input file stuff
     FILE* infile;
     char buffer[40];
-    char temp[60];          // temporary stack for part b transfering
+    int row_index = 0;      // which row in the text input. I know the first 8 are the piles, 9 is numbers, below 9 is
+                            // move commandz
+
+    // temp stack for transferring values in part b. 60 is max height it could be
+    char temp[60];
     int temp_height = 0;
-    char temp_char_a;         // after pushing and popping
+
+    // temp characters for the transfer step
+    char temp_char_a;
     char temp_char_b;
+
+    // stacks and their respective heights. each one has 10 indices so I can keep things indexed as they are in the prob
+    // (i.e. 1 is the first pile of stuff)
     char stacc_a[10][60];
     char stacc_b[10][60];
     int height_a[10] = {0};
     int height_b[10] = {0};
-    int row_index = 0;
-    int moves[3] = {0, 0, 0};
-    int move_amt;
-    int source;
-    int destination;
+
+    // at each level of the move commands. moves[] will keep track of the values as I go (might need to do fancy
+    // multiplication stuff in the case of double-digit move commands).
+    int moves[3] = {0};
+    int move_amt;           // how many blocks to move at a particular level
+    int source;             // source pile when moving blocks
+    int destination;        // destination pile
+
+    // these deal with the "index" of the characters in the move command input lines
+    // curr_i keeps track of how many spaces we've come across.
+    // For example, in this line: "move 5 from 2 to 2"
+    // curr_i = 1 after the space after move. This tells me the next chars I come across (before the space) are numbers
+    // to be parsed.
+    // dir_index is the normalized input to add things to the moves array above (normalized with the handy-dandy
+    // normalize function)
     int curr_i = 0;
     int dir_index;
+
+    // curr_pile is used when parsing the first input lines to add characters to the correct pile
+    // stack_index is used a few times to push and pop to/from the correct stacks
     int curr_pile;
     int stack_index;
 
@@ -114,9 +139,9 @@ void day_5() {
                     moves[0] = 0;
                     moves[1] = 0;
                     moves[2] = 0;
-                } else if (curr_i % 2 == 1) {           // at a number ;)
+                } else if (curr_i % 2 == 1) {               // at a number ;)
                     dir_index = normalize(curr_i);
-                    moves[dir_index] *= 10;
+                    moves[dir_index] *= 10;                 // in case we have multiple digits
                     moves[dir_index] += (buffer[i] - 48);
                 }
             }
