@@ -10,5 +10,6 @@
 #include "./days/day_3.h"
 #include "./days/day_4.h"
 #include "./days/day_5.h"
+#include "./days/day_6.h"
 
 #endif //C_ALL_DAYS_H

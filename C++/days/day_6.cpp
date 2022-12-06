@@ -31,9 +31,10 @@ void day_6() {
                 if (count == PART_B_LEN) {
                     part_a = i; break;
                 }
+            } else{
+                count = i - nums[curr_i];
+                nums[curr_i] = i;
             }
-            count = i - nums[curr_i];
-            nums[curr_i] = i;
 
         }
     } cout << "Part A answer: " << part_a+1 << endl;
