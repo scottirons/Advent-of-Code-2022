@@ -37,10 +37,6 @@ class Structure:
 
 
 def recursive_add(directory: Dir):
-
-    if not directory.get_sub_dirs():
-        return directory.get_total()
-
     for _, sub_dir in directory.get_sub_dirs().items():
         add_val = recursive_add(sub_dir)
         directory.add_to_total(add_val)
