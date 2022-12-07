@@ -51,13 +51,18 @@ void day_7() {
         }
     }
     int total_sub_100 = 0;
-    int amt_left = dirs["/"] - 400000;
+    int amt_left = dirs["/"] - 40000000;
+    int curr_min = INT_MAX;
     for (auto const& [key, value]: dirs) {
         if (value <= 100000) {
             total_sub_100 += value;
         }
+        if ((value >= amt_left) && (value <= curr_min)) {
+            curr_min = value;
+        }
     }
     cout << "Part A total: " << total_sub_100 << endl;
+    cout << "Part B total: " << curr_min << endl;
 
 
 
