@@ -3,6 +3,6 @@
 
 int main() {
 
-    day_6();
+    day_7();
     return 0;
 }
