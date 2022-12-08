@@ -2,6 +2,7 @@
 #include "all_days.h"
 
 int main() {
-    printf("%ld", 9l);
+
+    day_7();
     return 0;
 }

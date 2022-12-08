@@ -11,5 +11,6 @@
 #include "./days/day_4.h"
 #include "./days/day_5.h"
 #include "./days/day_6.h"
+#include "./days/day_7.h"
 
 #endif //C_ALL_DAYS_H
