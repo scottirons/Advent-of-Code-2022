@@ -64,6 +64,77 @@ int count_visibility(const vector<vector<int>>& trees, vector<vector<int>>& visi
     return visible_count;
 }
 
+int find_greatest_view_score(const vector<vector<int>>& trees) {
+
+    int curr_top = 0;
+
+    for (int row = 1; row < trees.size() - 1; row++) {
+        for (int col = 1; col < trees.size() - 1; col++) {
+
+            int start_val = trees[row][col];
+            int curr_score = 1;
+
+            // check up
+            int i = row - 1;
+            int up = 0;
+            while (i >= 0) {
+                if (trees[i][col] >= start_val) {
+                    up++;
+                    break;
+                } else {
+                    up++;
+                }
+                i--;
+            }
+            curr_score *= up;
+
+            // check down
+            i = row + 1;
+            int down = 0;
+            while (i < trees.size()) {
+                if (trees[i][col] >= start_val) {
+                    down++;
+                    break;
+                } else {
+                    down++;
+                }
+                i++;
+            }
+            curr_score *= down;
+
+            // check right
+            i = col + 1;
+            int right = 0;
+            while (i < trees.size()) {
+                if (trees[row][i] >= start_val) {
+                    right++;
+                    break;
+                } else {
+                    right++;
+                }
+                i++;
+            }
+            curr_score *= right;
+
+            // check left
+            i = col - 1;
+            int left = 0;
+            while (i >= 0) {
+                if (trees[row][i] >= start_val) {
+                    left++;
+                    break;
+                } else {
+                    left++;
+                }
+                i--;
+            }
+            curr_score *= left;
+            curr_top = max(curr_score, curr_top);
+        }
+    }
+    return curr_top;
+}
+
 void day_8() {
     fstream file;
     string line;
@@ -85,5 +156,6 @@ void day_8() {
     int rows = trees.size();
     vector<vector<int>> visible(rows, vector<int>(rows, 0));
 
-    cout << count_visibility(trees, visible);
+    cout << count_visibility(trees, visible) << endl;
+    cout << find_greatest_view_score(trees) << endl;
 }
