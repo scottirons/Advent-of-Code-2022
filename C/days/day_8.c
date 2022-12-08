@@ -11,7 +11,7 @@ void day_8() {
     char buffer[101];
     char grid[99][99];
     int tall[99][99] = {0};
-    int view[99][99] = {0};
+    //int view[99][99] = {0};
 
     file = fopen("../../inputs/day_8.txt", "r");
     int i = 0;
@@ -142,7 +142,7 @@ void day_8() {
                 }
                 i++;
             } score *= count_right;
-            view[row][col] = score;
+            //view[row][col] = score;
 
             if (score > max_score) {
                 max_score = score;
