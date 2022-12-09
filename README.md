@@ -1,8 +1,8 @@
 # Advent-of-Code-2022
 
-Working on the puzzles to both learn new languages and build existing skills.
+Working on the puzzles to both learn new languages and build existing skills. As of Day 9 (December 9th), I'll likely stop doing the puzzles in all 4 languages each day, because the last few of them have taken up to/upwards of an hour per implementation. 
 
-Language: goals
+Language goals:
 
 C++: Learn, utilize standard library and modern functionality as much as possible
 
