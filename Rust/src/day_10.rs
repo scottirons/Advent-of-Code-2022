@@ -31,7 +31,7 @@ pub fn solution() {
             if (cycles.rem_euclid(40) - register_val).abs() <= 1 {
                 line_vec.push(String::from("#"));
             } else {
-                line_vec.push(String::from("."));
+                line_vec.push(String::from(" "));
             }
             if line_vec.len() == 40 {
                 crt.push(line_vec.to_vec());
