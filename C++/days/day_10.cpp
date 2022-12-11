@@ -26,7 +26,7 @@ void day_10() {
             number = stoi(line.substr(5));
             moves = 2;
         }
-        // noop and at 19
+        // at 19
         if ((cycle - 19) % 40 == 0) {
             total += (reg_val * (cycle + 1));
         } else if ((moves == 2) && ((cycle - 18) % 40 == 0)) {
