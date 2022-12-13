@@ -67,8 +67,7 @@ fn solution_b(grid: &Vec<Vec<&u8>>, end: (usize, usize)) -> i32 {
                 to_explore.push_back((next_dir.0 as usize, next_dir.1 as usize));
                 visited.insert((next_dir.0 as usize, next_dir.1 as usize));
                 if grid[next_dir.0 as usize][next_dir.1 as usize] == &97 {
-                    result = retrace(&end, &(next_dir.0 as usize, next_dir.1 as usize), &path);
-                    return result;
+                    return retrace(&end, &(next_dir.0 as usize, next_dir.1 as usize), &path);
                 }
             }
         }
@@ -106,8 +105,8 @@ fn solution_a(grid: &Vec<Vec<&u8>>, start: (usize, usize), end: (usize, usize)) 
                 to_explore.push_back((next_dir.0 as usize, next_dir.1 as usize));
                 visited.insert((next_dir.0 as usize, next_dir.1 as usize));
                 if (next_dir.0 as usize, next_dir.1 as usize) == end {
-                    result = retrace(&start, &end, &path);
-                    return result;
+                    return retrace(&start, &end, &path);
+
                 }
 
             }
