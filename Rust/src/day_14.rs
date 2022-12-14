@@ -21,17 +21,11 @@ fn move_sand(grid: &mut Vec<Vec<char>>, y: &mut usize, x: &mut usize) -> bool {
             (true, true, true) => {
                 grid[*y][*x] = 'o';
                 return true;
-            }
-            (false, true, true) => {
+            } (false, true, _) => {
                 *x -= 1;
-            }
-            (false, true, false) => {
-                *x -= 1;
-            }
-            (true, true, false) => {
+            } (true, true, false) => {
                 *x += 1;
-            }
-            _ => ()
+            } _ => ()
         } *y += 1;
     }
 }
