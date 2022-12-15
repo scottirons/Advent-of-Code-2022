@@ -87,23 +87,57 @@ fn part_a(signals: &Sensomatic, boundaries: &[i64; 2], y: i64) -> i64 {
     count
 }
 
-fn part_b(signals: &Sensomatic) -> (i64, i64) {
-    let mut result = (0, 0);
-    for x in 0..=4000000 {
-        for y in 0..=4000000 {
-            let mut found_count = 0;
-            for signal in signals.signals.iter() {
-                let dist = calculate_manhattan_distance(&signal.coords, &(x, y));
-                if dist > signal.dist {
-                    found_count += 1;
-                }
+fn check_yourself(signals: &Sensomatic, xy: &(i64, i64)) -> bool {
+    let mut found_count = 0;
+    for s in signals.signals.iter() {
+        let dist = calculate_manhattan_distance(&s.coords, &(xy.0, xy.1));
+        if dist > s.dist {
+            found_count += 1;
+        }
+    }
+    if (found_count == signals.signals.len()) && (xy.0 >= 0) && (xy.0 <= 4000000) && (xy.1 >= 0) && (xy.1 <= 4000000) {
+        return true;
+    }
+    false
+}
+
+fn part_b(signals: &Sensomatic) -> i64 {
+    for signal in signals.signals.iter() {
+        let mut start = (signal.coords.0, signal.coords.1 - signal.dist - 1);
+        // down right +1/+1
+        for _ in 0..(signal.dist + 1) {
+            start.0 += 1;
+            start.1 += 1;
+            if check_yourself(signals, &start) {
+                return start.0 * 4000000 + start.1;
             }
-            if found_count == signals.signals.len() {
-                return (x, y);
+        }
+        // down left -1/+1
+        for _ in 0..(signal.dist + 1) {
+            start.0 -= 1;
+            start.1 += 1;
+            if check_yourself(signals, &start) {
+                return start.0 * 4000000 + start.1;
+            }
+        }
+        // up left -1/-1
+        for _ in 0..(signal.dist + 1) {
+            start.0 -= 1;
+            start.1 -= 1;
+            if check_yourself(signals, &start) {
+                return start.0 * 4000000 + start.1;
+            }
+        }
+        // up right +1/-1
+        for _ in 0..(signal.dist + 1) {
+            start.0 += 1;
+            start.1 -= 1;
+            if check_yourself(signals, &start) {
+                return start.0 * 4000000 + start.1;
             }
         }
     }
-    result
+    0
 }
 
 pub fn solution() {
@@ -139,8 +173,7 @@ pub fn solution() {
         boundaries[1] = boundaries[1].max(all_coords[0] + new_sensor.dist + 1);
         collection.add(new_sensor);
     }
-    let mut found: Option<(i64, i64)> = None;
     //println!("Part A total: {}", part_a(&collection, &boundaries, TARGET_TEST));
     println!("Part A total: {}", part_a(&collection, &boundaries, TARGET_A));
-    println!("Part B tuple: {:?}", part_b(&collection));
+    println!("Part B result: {:?}", part_b(&collection));
 }
