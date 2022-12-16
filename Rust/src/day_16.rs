@@ -56,10 +56,15 @@ impl<'a> Valve<'a> {
 //     _phantom_data: std::marker::PhantomData<&'a ()>,
 // }
 
+fn part_a(tunnels: &TunnelNetwork) -> u32 {
+    let mut result = 0;
+
+    result
+}
 
 pub fn solution() {
     let mut input = include_str!("input.txt").split('\n').collect::<Vec<&str>>();
-    let mut input = include_str!("../../inputs/day_16.txt").split('\n').collect::<Vec<&str>>();
+    //let mut input = include_str!("../../inputs/day_16.txt").split('\n').collect::<Vec<&str>>();
 
     let mut tunnels = TunnelNetwork::new();
     let mut temp_valves: Vec<Vec<String>> = Vec::with_capacity(input.len());
