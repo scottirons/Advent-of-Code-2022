@@ -56,8 +56,36 @@ impl<'a> Valve<'a> {
 //     _phantom_data: std::marker::PhantomData<&'a ()>,
 // }
 
+fn efficiency_score(tunnels: &TunnelNetwork, visited: &HashSet<String>, path: &Vec<String>, time: &u32) -> f32 {
+    let mut score = 0.0;
+    let mut test_time = time.clone();
+
+    for valve in path {
+        test_time -= 1;
+        if test_time < 0 {
+            return 0.0;
+        }
+        if !visited.contains(valve) {
+            let flow = tunnels.valves[tunnels.name_map[&valve.clone()]].flow.clone();
+            if flow > 0 {
+                test_time -= 1;
+            }
+        }
+
+    }
+
+    score
+}
+
 fn part_a(tunnels: &TunnelNetwork) -> u32 {
     let mut result = 0;
+    let mut tick_tock_motherfucker = 30;
+    let mut curr_loc = tunnels.valves[0].name.clone();
+    let mut visited: HashSet<String> = HashSet::from([curr_loc]);
+
+
+    // one minute to open, one minute to move
+
 
     result
 }
@@ -121,4 +149,5 @@ pub fn solution() {
         }
         //println!("{:?}", paths);
     }
+    println!("Part A total: {}", part_a(&tunnels));
 }
