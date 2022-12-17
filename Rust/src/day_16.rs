@@ -1,153 +1,144 @@
 use std::collections::{ HashSet, HashMap, VecDeque };
 
-#[derive(Debug)]
-struct TunnelNetwork<'a> {
-    valves: Vec<Valve<'a>>,
-    name_map: HashMap<String, usize>,
-    _phantom_data: std::marker::PhantomData<&'a ()>,
-}
-
-impl<'a> TunnelNetwork<'a> {
-    fn new() -> TunnelNetwork<'a> {
-        TunnelNetwork {
-            valves: Vec::new(),
-            name_map: HashMap::new(),
-            _phantom_data: std::marker::PhantomData,
+fn shortest_paths(valves: &Vec<(String, usize, Vec<String>)>, important: &HashMap<usize, usize>) -> HashMap<usize, HashMap<usize, usize>> {
+    let mut paths = HashMap::new();
+    let mut fancy_array = [[10000_usize; 60]; 60];     // 55 lines in input CHANGE THIS
+    for i in 0..valves.len() {
+        for connection in &valves[i].2 {
+            let mut connection_i = 0;
+            for (j, valve) in valves.iter().enumerate() {
+                if valve.0 == *connection {
+                    connection_i = j;
+                }
+            }
+            fancy_array[i][connection_i] = 1;
+            fancy_array[connection_i][i] = 1;
         }
     }
-    fn add_valve(&mut self, valve: Valve<'a>) {
-        self.name_map.insert(valve.name.clone(), self.valves.len());
-        self.valves.push(valve);
-    }
-    fn connect_valves(& mut self, index_a: usize, name_b: String) {
-        self.valves[index_a].add_connection(name_b);
-
-    }
-}
-
-#[derive(Debug)]
-struct Valve<'a> {
-    name: String,
-    flow: u32,
-    connections: Vec<String>,
-    paths: Vec<Vec<String>>,
-    _phantom_data: std::marker::PhantomData<&'a ()>,
-}
-
-impl<'a> Valve<'a> {
-    fn create(name: String, flow: u32) -> Valve<'static> {
-        Valve {
-            name,
-            flow,
-            connections: Vec::new(),
-            paths: Vec::new(),
-            _phantom_data: std::marker::PhantomData,
-        }
-    }
-    fn add_connection(& mut self, connection: String) {
-        self.connections.push(connection);
-    }
-}
-
-// #[derive(Debug)]
-// struct Path<'a> {
-//     start: Valve<'a>,
-//     moves: Vec<String>,
-//     _phantom_data: std::marker::PhantomData<&'a ()>,
-// }
-
-fn efficiency_score(tunnels: &TunnelNetwork, visited: &HashSet<String>, path: &Vec<String>, time: &u32) -> f32 {
-    let mut score = 0.0;
-    let mut test_time = time.clone();
-
-    for valve in path {
-        test_time -= 1;
-        if test_time < 0 {
-            return 0.0;
-        }
-        if !visited.contains(valve) {
-            let flow = tunnels.valves[tunnels.name_map[&valve.clone()]].flow.clone();
-            if flow > 0 {
-                test_time -= 1;
+    for k in 0..valves.len() {
+        for i in 0..valves.len() {
+            for j in 0..valves.len() {
+                fancy_array[i][j] = fancy_array[i][j].min(fancy_array[i][k] + fancy_array[k][j]);
             }
         }
-
     }
-
-    score
-}
-
-fn part_a(tunnels: &TunnelNetwork) -> u32 {
-    let mut result = 0;
-    let mut tick_tock_motherfucker = 30;
-    let mut curr_loc = tunnels.valves[0].name.clone();
-    let mut visited: HashSet<String> = HashSet::from([curr_loc]);
-
-
-    // one minute to open, one minute to move
-
-
-    result
+    for i in 0..valves.len() {
+        let line = fancy_array[i];
+        let mut path_map = HashMap::new();
+        for (j, dist) in line.iter().enumerate() {
+            if (j != i) && important.contains_key(&j) {
+                path_map.insert(j, *dist);
+            }
+        }
+        paths.insert(i, path_map);
+    }
+    //println!("{:?}", paths);
+    paths
 }
 
 pub fn solution() {
-    let mut input = include_str!("input.txt").split('\n').collect::<Vec<&str>>();
-    //let mut input = include_str!("../../inputs/day_16.txt").split('\n').collect::<Vec<&str>>();
+    //let mut input = include_str!("input.txt").split('\n').collect::<Vec<&str>>();
+    let mut input = include_str!("../../inputs/day_16.txt").split('\n').collect::<Vec<&str>>();
+    //let mut input = include_str!("test.txt").split('\n').collect::<Vec<&str>>();
 
-    let mut tunnels = TunnelNetwork::new();
-    let mut temp_valves: Vec<Vec<String>> = Vec::with_capacity(input.len());
+    let mut valves = Vec::with_capacity(input.len());
+    let mut positive_valves = HashMap::new();
     for line in input {
         let split: Vec<&str> = line.split_whitespace().collect();
-        // 1 index = name
-        // 4 index has flow
-        // 9.. indices have connections
         let name = String::from(split[1]);
-        let flow = split[4][5..split[4].len() - 1].parse::<u32>().unwrap();
+        let flow = split[4][5..split[4].len() - 1].parse::<usize>().unwrap();
         let mut temp_vec: Vec<String> = Vec::new();
         for i in 9..split.len() {
             temp_vec.push(String::from(&split[i][0..2]));
         }
-        let mut valve = Valve::create(name, flow);
-        tunnels.add_valve(valve);
-        temp_valves.push(temp_vec);
+        valves.push((name, flow, temp_vec) );
     }
-    // now add connections from temp_valves
-    for (i, mut conx) in temp_valves.iter().enumerate() {
-        for con in conx {
-            tunnels.connect_valves(i, con.clone());
+    let mut start = 0;
+    valves.sort_by(|a, b|b.1.cmp(&a.1));
+    for (i, valve) in valves.iter().enumerate() {
+        if valve.0 == "AA" {
+            start = i;
         }
     }
 
-    // find all paths
-    for i in 0..tunnels.valves.len() {
-        let mut paths: Vec<Vec<String>> = Vec::new();
-        let mut visited: HashSet<String> = HashSet::from([tunnels.valves[i].name.clone()]);
-        let start = &tunnels.valves[i];
-        let mut curr_path: Vec<String> = Vec::new();
-        let mut to_visit: VecDeque<Vec<String>> = VecDeque::new();
-        for next in &tunnels.valves[i].connections {
-            to_visit.push_back(Vec::from([next.clone()]));
+    for (i, valve) in valves.iter().enumerate() {
+        if valve.1 > 0 {
+            positive_valves.insert(i, valve.1);
         }
-        while to_visit.len() > 0 {
-            let next_val = to_visit.pop_front().unwrap();
-            if !visited.contains(&*next_val[next_val.len() - 1]) {
-                curr_path = next_val.clone();
-                paths.push(curr_path.clone());
-            }
-            visited.insert(next_val[next_val.len() - 1].clone());
-            let next_i = &tunnels.valves[tunnels.name_map[&next_val[next_val.len() - 1].clone()]];
-            for next in &next_i.connections {
-                if !visited.contains(next) {
-                    curr_path.push(next.clone());
-                    to_visit.push_back(curr_path.clone());
-                    curr_path.pop();
-                }
-            }
-        }
-        for path in &paths {
-            tunnels.valves[i].paths.push(path.to_owned());
-        }
-        //println!("{:?}", paths);
     }
-    println!("Part A total: {}", part_a(&tunnels));
+    //println!("{:?}", valves);
+    let paths = shortest_paths(&valves, &positive_valves);
+    let result_a = part_a(&paths, &positive_valves, &start);
+    println!("{}", result_a);
+
+}
+
+fn backtrack(paths: &HashMap<usize, HashMap<usize, usize>>, positive: &HashMap<usize, usize>, mut result: usize,
+             mut curr_time: i32, mut curr_path: Vec<usize>, curr: usize, mut states: &mut HashMap<Vec<usize>, usize>) -> (usize, Vec<usize>) {
+
+    if (curr_path.len() > positive.len()) || (curr_time <= 0) {
+        return (result, curr_path);
+    }
+    let mut starting_result = result.clone();
+    let mut clone_path = curr_path.clone();
+
+    for connection in &paths[&curr] {
+        if (curr_path[*connection.0] != 1) && (curr_time - *connection.1 as i32 >= 0) {
+            if curr_time - *connection.1 as i32 > 0 {
+                let mut time_clone = curr_time.clone();
+                time_clone -= *connection.1 as i32;
+                time_clone -= 1;
+                curr_path[*connection.0] = 1;
+                starting_result += time_clone as usize * positive[&*connection.0];
+
+                if ((curr_path.iter().filter(|&n| *n == 1).count()) >= positive.len()) && (time_clone >= 0) {
+                    return (starting_result, curr_path);
+                }
+                let backtrack_result = (backtrack(paths, positive, starting_result, time_clone, curr_path.clone(), *connection.0, states));
+                states.insert(backtrack_result.1.clone(), backtrack_result.0.max(if states.contains_key(&*backtrack_result.1) { states[&backtrack_result.1] } else { 0 }));
+                states.insert(clone_path.clone(), result.max(if states.contains_key(&*clone_path) { states[&clone_path] } else { 0 }));
+
+                if backtrack_result.0 > result {
+                    result = backtrack_result.0;
+                    clone_path = backtrack_result.1;
+                }
+                starting_result -= time_clone as usize * positive[connection.0];
+                curr_path[*connection.0] = 0;
+            }
+        }
+    }
+    (result.max(starting_result), clone_path)
+}
+
+fn part_a(paths: &HashMap<usize, HashMap<usize, usize>>, positive: &HashMap<usize, usize>, start: &usize) -> usize {
+    let mut result = 0;
+    let mut curr_time = 26;
+    let mut curr: usize = *start;
+    let mut curr_path = Vec::new();
+    for _ in 0..positive.len() {
+        curr_path.push(0);
+    }
+    let mut states = HashMap::new();
+    let score = backtrack(paths, positive, result, curr_time, curr_path, curr, &mut states);
+    let mut total_b = 0;
+    println!("{}", states.len());
+    for (i, state) in states.iter().enumerate() {
+        for (j, j_state) in states.iter().enumerate() {
+            if i != j {
+                let mut same_count = 0;
+                for n in 0..state.0.len() {
+                    if (state.0[n] == 1) && (j_state.0[n] == 1) {
+                        same_count += 1;
+                    }
+                }
+                if same_count == 0 {
+                    total_b = total_b.max(state.1 + j_state.1);
+                }
+
+            }
+        }
+    }
+    println!("{}", total_b);
+
+    score.0
 }
