@@ -34,8 +34,8 @@ struct Blueprint {
 
 
 pub fn solution() {
-    //let mut input = include_str!("../../inputs/day_19.txt").split('\n').collect::<Vec<&str>>();
-    let mut input = include_str!("input.txt").split('\n').collect::<Vec<&str>>();
+    let mut input = include_str!("../../inputs/day_19.txt").split('\n').collect::<Vec<&str>>();
+    //let mut input = include_str!("input.txt").split('\n').collect::<Vec<&str>>();
     let mut blueprints: Vec<Blueprint> = Vec::new();
 
     for blueprint in input {
@@ -62,17 +62,20 @@ pub fn solution() {
     }
     let mut result = 0;
     // part A
-    // for (i, blueprint) in blueprints.iter().enumerate() {
-    //     let val = calculate_ore(blueprint, 24);
-    //     result += val * (i as i32 + 1);
-    // }
-    // part B
     for (i, blueprint) in blueprints.iter().enumerate() {
+        let val = calculate_ore(blueprint, 24);
+        result += val * (i as i32 + 1);
+    }
+    // part B
+    let mut result_b = 1;
+    for (i, blueprint) in blueprints.iter().enumerate().take(3) {
         let val = calculate_ore(blueprint, 32);
-        println!("Part B: {}", val);
+        println!("{}", val);
+        result_b *= val;
     }
 
     println!("{}", result);
+    println!("Part B: {}", result_b);
 }
 
 fn calculate_ore(blueprint: &Blueprint, begin: i32) -> i32 {
@@ -86,13 +89,13 @@ fn calculate_ore(blueprint: &Blueprint, begin: i32) -> i32 {
     let start = (begin, 0, 0, 0, 0, 1, 0, 0, 0);
     let mut states: HashSet<(i32, i32, i32, i32, i32, i32, i32, i32, i32)> = HashSet::new(); // do i need this?
     let mut queue: VecDeque<(i32, i32, i32, i32, i32, i32, i32, i32, i32)> = VecDeque::from([start]);
-    // let mut new_ore = 0;
-    // let mut new_clay = 0;
-    // let mut new_obs = 0;
-    // let mut new_geodes = 0;
+    let mut stack: Vec<(i32, i32, i32, i32, i32, i32, i32, i32, i32)> = Vec::from([start]);
 
-    while queue.len() > 0 {
-        let mut state = queue.pop_front().unwrap();
+    while stack.len() > 0 {
+        //let mut state = queue.pop_front().unwrap();
+
+        let state = *stack.last().unwrap();
+        stack.pop();
 
         // 0: time, 1: geode, 2: ore, 3: clay, 4: obsidian, 5: obot, 6: cbot, 7: obsbot, 8: gbot
         // update amounts of stuff
@@ -117,7 +120,8 @@ fn calculate_ore(blueprint: &Blueprint, begin: i32) -> i32 {
         if (state.2 >= blueprint.geode.ore_cost) && (state.4 >= blueprint.geode.obsidian_cost) {
             new_state = (state.0 - 1, new_geodes, new_ore - blueprint.geode.ore_cost, new_clay, new_obs - blueprint.geode.obsidian_cost, state.5, state.6, state.7, state.8 + 1);
             if !states.contains(&new_state) {
-                queue.push_back(new_state);
+                //queue.push_back(new_state);
+                stack.push(new_state);
                 states.insert(new_state);
                 continue;
             }
@@ -126,7 +130,8 @@ fn calculate_ore(blueprint: &Blueprint, begin: i32) -> i32 {
         if (state.2 >= blueprint.ore.ore_cost) && (state.5 < max_ore) {
             new_state = (state.0 - 1, new_geodes, new_ore - blueprint.ore.ore_cost, new_clay, new_obs, state.5 + 1, state.6, state.7, state.8);
             if !states.contains(&new_state) {
-                queue.push_back(new_state);
+                //queue.push_back(new_state);
+                stack.push(new_state);
                 states.insert(new_state);
             }
         }
@@ -134,7 +139,8 @@ fn calculate_ore(blueprint: &Blueprint, begin: i32) -> i32 {
         if (state.2 >= blueprint.clay.ore_cost) && (state.6 < max_clay) {
             new_state = (state.0 - 1, new_geodes, new_ore - blueprint.clay.ore_cost, new_clay, new_obs, state.5, state.6 + 1, state.7, state.8);
             if !states.contains(&new_state) {
-                queue.push_back(new_state);
+                //queue.push_back(new_state);
+                stack.push(new_state);
                 states.insert(new_state);
             }
         }
@@ -142,13 +148,15 @@ fn calculate_ore(blueprint: &Blueprint, begin: i32) -> i32 {
         if (state.2 >= blueprint.obsidian.ore_cost) && (state.3 >= blueprint.obsidian.clay_cost) && (state.7 < max_obs) {
             new_state = (state.0 - 1, new_geodes, new_ore - blueprint.obsidian.ore_cost, new_clay - blueprint.obsidian.clay_cost, new_obs, state.5, state.6, state.7 + 1, state.8);
             if !states.contains(&new_state) {
-                queue.push_back(new_state);
+                //queue.push_back(new_state);
+                stack.push(new_state);
                 states.insert(new_state);
             }
         }
         new_state = (state.0 - 1, new_geodes, new_ore, new_clay, new_obs, state.5, state.6, state.7, state.8);
         if !states.contains(&new_state) {
-            queue.push_back(new_state);
+            //queue.push_back(new_state);
+            stack.push(new_state);
             states.insert(new_state);
         }
     }
