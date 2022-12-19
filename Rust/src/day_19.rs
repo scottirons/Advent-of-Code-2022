@@ -81,7 +81,7 @@ pub fn solution() {
 fn calculate_ore(blueprint: &Blueprint, begin: i32) -> i32 {
 
     let mut cracked = 0;
-    let max_ore = blueprint.ore.ore_cost + blueprint.geode.ore_cost + blueprint.obsidian.ore_cost + blueprint.clay.ore_cost;
+    let max_ore = blueprint.ore.ore_cost.max(blueprint.geode.ore_cost.max(blueprint.obsidian.ore_cost.max(blueprint.clay.ore_cost)));
     let max_clay = blueprint.obsidian.clay_cost;
     let max_obs = blueprint.geode.obsidian_cost;
 
@@ -116,7 +116,7 @@ fn calculate_ore(blueprint: &Blueprint, begin: i32) -> i32 {
 
         let mut new_state;
 
-        // build new geode if possible
+        // build new geode
         if (state.2 >= blueprint.geode.ore_cost) && (state.4 >= blueprint.geode.obsidian_cost) {
             new_state = (state.0 - 1, new_geodes, new_ore - blueprint.geode.ore_cost, new_clay, new_obs - blueprint.geode.obsidian_cost, state.5, state.6, state.7, state.8 + 1);
             if !states.contains(&new_state) {
@@ -127,7 +127,7 @@ fn calculate_ore(blueprint: &Blueprint, begin: i32) -> i32 {
             }
         }
         // build new ore if had enough at start of the round
-        if (state.2 >= blueprint.ore.ore_cost) && (state.5 < max_ore) {
+        if (state.2 >= blueprint.ore.ore_cost) && (state.5 < max_ore) && !(state.5 * state.0 + state.2 >= state.0 * max_ore) {
             new_state = (state.0 - 1, new_geodes, new_ore - blueprint.ore.ore_cost, new_clay, new_obs, state.5 + 1, state.6, state.7, state.8);
             if !states.contains(&new_state) {
                 //queue.push_back(new_state);
@@ -136,7 +136,7 @@ fn calculate_ore(blueprint: &Blueprint, begin: i32) -> i32 {
             }
         }
         // build new clay if possible
-        if (state.2 >= blueprint.clay.ore_cost) && (state.6 < max_clay) {
+        if (state.2 >= blueprint.clay.ore_cost) && (state.6 < max_clay) && !(state.6 * state.0 + state.3 >= state.0 * max_clay){
             new_state = (state.0 - 1, new_geodes, new_ore - blueprint.clay.ore_cost, new_clay, new_obs, state.5, state.6 + 1, state.7, state.8);
             if !states.contains(&new_state) {
                 //queue.push_back(new_state);
@@ -145,7 +145,7 @@ fn calculate_ore(blueprint: &Blueprint, begin: i32) -> i32 {
             }
         }
         // build new obsidian if possible
-        if (state.2 >= blueprint.obsidian.ore_cost) && (state.3 >= blueprint.obsidian.clay_cost) && (state.7 < max_obs) {
+        if (state.2 >= blueprint.obsidian.ore_cost) && (state.3 >= blueprint.obsidian.clay_cost) && (state.7 < max_obs) && !(state.7 * state.0 + state.4 >= state.0 * max_obs) {
             new_state = (state.0 - 1, new_geodes, new_ore - blueprint.obsidian.ore_cost, new_clay - blueprint.obsidian.clay_cost, new_obs, state.5, state.6, state.7 + 1, state.8);
             if !states.contains(&new_state) {
                 //queue.push_back(new_state);
