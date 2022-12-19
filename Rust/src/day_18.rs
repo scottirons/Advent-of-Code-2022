@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+#![allow(unused_variables, warnings)]
 use std::collections::{ HashSet, VecDeque };
 
 pub fn solution() {
