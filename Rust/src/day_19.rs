@@ -62,14 +62,14 @@ pub fn solution() {
     }
     let mut result = 0;
     // part A
-    for (i, blueprint) in blueprints.iter().enumerate() {
-        let val = calculate_ore(blueprint, 24);
-        result += val * (i as i32 + 1);
-    }
+    // for (i, blueprint) in blueprints.iter().enumerate() {
+    //     let val = calculate_ore(blueprint, 24);
+    //     result += val * (i as i32 + 1);
+    // }
     // part B
     for (i, blueprint) in blueprints.iter().enumerate() {
         let val = calculate_ore(blueprint, 32);
-        println!("{}", val);
+        println!("Part B: {}", val);
     }
 
     println!("{}", result);
@@ -93,11 +93,6 @@ fn calculate_ore(blueprint: &Blueprint, begin: i32) -> i32 {
 
     while queue.len() > 0 {
         let mut state = queue.pop_front().unwrap();
-        if states.contains(&state) {
-            continue;
-        } else {
-            states.insert(state);
-        }
 
         // 0: time, 1: geode, 2: ore, 3: clay, 4: obsidian, 5: obot, 6: cbot, 7: obsbot, 8: gbot
         // update amounts of stuff
@@ -116,24 +111,45 @@ fn calculate_ore(blueprint: &Blueprint, begin: i32) -> i32 {
             continue;
         }
 
-        // build nothing
-        queue.push_back((state.0 - 1, new_geodes, new_ore, new_clay, new_obs, state.5, state.6, state.7, state.8));
+        let mut new_state;
 
+        // build new geode if possible
+        if (state.2 >= blueprint.geode.ore_cost) && (state.4 >= blueprint.geode.obsidian_cost) {
+            new_state = (state.0 - 1, new_geodes, new_ore - blueprint.geode.ore_cost, new_clay, new_obs - blueprint.geode.obsidian_cost, state.5, state.6, state.7, state.8 + 1);
+            if !states.contains(&new_state) {
+                queue.push_back(new_state);
+                states.insert(new_state);
+                continue;
+            }
+        }
         // build new ore if had enough at start of the round
         if (state.2 >= blueprint.ore.ore_cost) && (state.5 < max_ore) {
-            queue.push_back((state.0 - 1, new_geodes, new_ore - blueprint.ore.ore_cost, new_clay, new_obs, state.5 + 1, state.6, state.7, state.8));
+            new_state = (state.0 - 1, new_geodes, new_ore - blueprint.ore.ore_cost, new_clay, new_obs, state.5 + 1, state.6, state.7, state.8);
+            if !states.contains(&new_state) {
+                queue.push_back(new_state);
+                states.insert(new_state);
+            }
         }
         // build new clay if possible
         if (state.2 >= blueprint.clay.ore_cost) && (state.6 < max_clay) {
-            queue.push_back((state.0 - 1, new_geodes, new_ore - blueprint.clay.ore_cost, new_clay, new_obs, state.5, state.6 + 1, state.7, state.8));
+            new_state = (state.0 - 1, new_geodes, new_ore - blueprint.clay.ore_cost, new_clay, new_obs, state.5, state.6 + 1, state.7, state.8);
+            if !states.contains(&new_state) {
+                queue.push_back(new_state);
+                states.insert(new_state);
+            }
         }
         // build new obsidian if possible
         if (state.2 >= blueprint.obsidian.ore_cost) && (state.3 >= blueprint.obsidian.clay_cost) && (state.7 < max_obs) {
-            queue.push_back((state.0 - 1, new_geodes, new_ore - blueprint.obsidian.ore_cost, new_clay - blueprint.obsidian.clay_cost, new_obs, state.5, state.6, state.7 + 1, state.8));
+            new_state = (state.0 - 1, new_geodes, new_ore - blueprint.obsidian.ore_cost, new_clay - blueprint.obsidian.clay_cost, new_obs, state.5, state.6, state.7 + 1, state.8);
+            if !states.contains(&new_state) {
+                queue.push_back(new_state);
+                states.insert(new_state);
+            }
         }
-        // build new geode if possible
-        if (state.2 >= blueprint.geode.ore_cost) && (state.4 >= blueprint.geode.obsidian_cost) {
-            queue.push_back((state.0 - 1, new_geodes, new_ore - blueprint.geode.ore_cost, new_clay, new_obs - blueprint.geode.obsidian_cost, state.5, state.6, state.7, state.8 + 1));
+        new_state = (state.0 - 1, new_geodes, new_ore, new_clay, new_obs, state.5, state.6, state.7, state.8);
+        if !states.contains(&new_state) {
+            queue.push_back(new_state);
+            states.insert(new_state);
         }
     }
     cracked
