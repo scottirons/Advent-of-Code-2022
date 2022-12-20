@@ -12,11 +12,11 @@ pub fn solution() {
         .collect::<Vec<isize>>();
 
     let mut part_2_nums = nums.iter().map(|n| n * 811589153).collect::<Vec<isize>>();
-    let mut order_index = HashMap::with_capacity(part_2_nums.len());
-    let mut index_order = HashMap::with_capacity(part_2_nums.len());
+    let mut order_index = Vec::with_capacity(part_2_nums.len());
+    let mut index_order = Vec::with_capacity(part_2_nums.len());
     for i in 0..part_2_nums.len() {
-        order_index.insert(i, i);
-        index_order.insert(i, i);
+        order_index.push(i);
+        index_order.push(i);
     }
     // find max/min
     let mut max = isize::MIN;
@@ -36,7 +36,7 @@ pub fn solution() {
     }
     let dif_b = max_b - min_b + 1;
 
-    //do_stuff(min, max, dif, &mut nums);
+    do_stuff(min, max, dif, &mut nums);
     //do_fancier_stuff(min, max, dif, &mut nums, &mut order_index, &mut index_order);
     do_fancier_stuff(min_b, max_b, dif_b, &mut part_2_nums, &mut order_index, &mut index_order);
 }
@@ -76,32 +76,32 @@ fn do_stuff(min: isize, max: isize, dif: isize, mut nums: &mut Vec<isize>) {
     println!("1000th: {}\n2000th: {}\n3000th: {}\nTotal: {}", a, b, c, a + b + c);
 }
 
-fn do_fancier_stuff(min: isize, max: isize, dif: isize, mut nums: &mut Vec<isize>, mut order_index: &mut HashMap<usize, usize>, mut index_order: &mut HashMap<usize, usize>) {
+fn do_fancier_stuff(min: isize, max: isize, dif: isize, mut nums: &mut Vec<isize>, mut order_index: &mut Vec<usize>, mut index_order: &mut Vec<usize>) {
 
     let mut moves;
     for _ in 0..10 {
         for order_i in 0..nums.len() {
-            let i = order_index[&order_i];
+            let i = order_index[order_i];
             //println!("Moving: {}\nCurrent state: {:?}", nums[i], nums);
             moves = nums[i].rem_euclid(nums.len() as isize - 1);
             if i + moves as usize > nums.len() - 1 {
                 moves = (nums.len() - 1 - moves as usize) as isize;
                 swap_left(i, moves, &mut nums);
                 for j in ((i - moves as usize + 1)..i + 1).rev() {
-                    index_order.insert(j, index_order[&(j - 1)]);
-                    order_index.insert(index_order[&j], j);
+                    index_order[j] = index_order[(j - 1)];
+                    order_index[index_order[j]] = j;
                 }
-                index_order.insert(i - moves as usize, order_i);
-                order_index.insert(order_i, i - moves as usize);
+                index_order[i - moves as usize] = order_i;
+                order_index[order_i] = i - moves as usize;
 
             } else {
                 swap_right(i, moves, &mut nums);
                 for j in i..(i + moves as usize) {
-                    index_order.insert(j, index_order[&(j + 1)]);
-                    order_index.insert(index_order[&j], j);
+                    index_order[j] = index_order[(j + 1)];
+                    order_index[index_order[j]] = j;
                 }
-                index_order.insert(i + moves as usize, order_i);
-                order_index.insert(order_i, i + moves as usize);
+                index_order[i + moves as usize] = order_i;
+                order_index[order_i] = i + moves as usize;
             }
             // println!("Move number: index{:?}", order_index);
             // println!("Index: move_number{:?}", index_order);
@@ -156,3 +156,4 @@ fn swap_right(mut index: usize, jumps: isize, mut array: &mut Vec<isize>) {
 }
 
 // [1, 2, -3, 3, -2, 0, 4]
+// 2488332343098
