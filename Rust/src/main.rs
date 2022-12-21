@@ -20,10 +20,11 @@ mod day_17;
 mod day_18;
 mod day_19;
 mod day_20;
+mod day_21;
 
 fn main() {
 
-    day_20::solution();
+    day_21::solution();
 
 }
 
