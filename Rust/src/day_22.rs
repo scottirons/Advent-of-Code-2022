@@ -17,7 +17,8 @@ struct Dimension {
 #[derive(Debug)]
 enum Turn {
     L,
-    R
+    R,
+    N
 }
 
 #[derive(Debug)]
@@ -29,7 +30,8 @@ struct Instruction {
 pub fn solution() {
     // total width is b + c - a in test
     // a + c - b in real deal
-    let mut input = include_str!("input.txt").split_once("\n\n").unwrap();
+    //let mut input = include_str!("input.txt").split_once("\n\n").unwrap();
+    let mut input = include_str!("../../inputs/day_22.txt").split_once("\n\n").unwrap();
 
     let mut grid = input.0.split("\n")
         .map(|l| l.chars().collect::<Vec<char>>()).collect::<Vec<Vec<char>>>();
@@ -108,6 +110,13 @@ pub fn solution() {
                 });
                 curr_count = 0;
             }
+            'N' => {
+                instructions.push(Instruction {
+                    moves: curr_count,
+                    turn: Turn::N
+                });
+                curr_count = 0;
+            }
             _ => {
                 curr_count *= 10;
                 curr_count += c.to_digit(10).unwrap() as usize;
@@ -122,20 +131,30 @@ fn part_a(instructions: &Vec<Instruction>, rows: &Vec<Dimension>, cols: &Vec<Dim
     //println!("{:?}", instructions);
     let mut curr_loc: (usize, usize) = (0, rows[0].start);
 
-    // 1: R, 2: D, 3: L, 4: U
-    let mut curr_dir = 1;
+    // 0: R, 1: D, 2: L, 3: U
+    let mut curr_dir: i8 = 0;
 
     for instruction in instructions {
-
+        curr_loc = match curr_dir.rem_euclid(2) {
+            0 => move_row(grid, rows, &curr_loc, &instruction.moves, &curr_dir),
+            1 => move_col(grid, cols, &curr_loc, &instruction.moves, &curr_dir),
+            _ => panic!("AHHHHHH")
+        };
+        match instruction.turn {
+            Turn::L => curr_dir = (curr_dir - 1).rem_euclid(4),
+            Turn::R => curr_dir = (curr_dir + 1).rem_euclid(4),
+            _ => ()
+        }
     }
+    println!("{}", (curr_loc.0 + 1) * 1000 + (curr_loc.1 + 1) * 4 + curr_dir as usize);
 }
 
-fn move_row(grid: &Vec<Vec<char>>, rows: &Vec<Dimension>, start: &(usize, usize), num: &usize, dir: &i32) -> (usize, usize) {
+fn move_row(grid: &Vec<Vec<char>>, rows: &Vec<Dimension>, start: &(usize, usize), num: &usize, dir: &i8) -> (usize, usize) {
     let mut col = start.1;
-    let boundary = (rows[start.0].start, rows[start.1].end);
+    let boundary = (rows[start.0].start, rows[start.0].end);
     for _ in 0..*num {
         let next: usize = match dir {
-            1 => {
+            0 => {
                 if col + 1 <= boundary.1 {
                     col + 1
                 }
@@ -143,8 +162,8 @@ fn move_row(grid: &Vec<Vec<char>>, rows: &Vec<Dimension>, start: &(usize, usize)
                     boundary.0
                 }
             }
-            3 => {
-                if col - 1 >= boundary.0 {
+            2 => {
+                if col >= boundary.0 + 1 {
                     col - 1
                 } else {
                     boundary.1
@@ -159,4 +178,47 @@ fn move_row(grid: &Vec<Vec<char>>, rows: &Vec<Dimension>, start: &(usize, usize)
         }
     }
     (start.0, col)
+}
+
+fn move_col(grid: &Vec<Vec<char>>, cols: &Vec<Dimension>, start: &(usize, usize), num: &usize, dir: &i8) -> (usize, usize) {
+    let mut row = start.0;
+    let boundary = (cols[start.1].start, cols[start.1].end);
+    for _ in 0..*num {
+        let next: usize = match dir {
+            1 => {
+                if row + 1 <= boundary.1 {
+                    row + 1
+                }
+                else {
+                    boundary.0
+                }
+            }
+            3 => {
+                if row >= boundary.0 + 1 {
+                    row - 1
+                } else {
+                    boundary.1
+                }
+            }
+            _ => panic!("Shouldn't be here!")
+        };
+        if grid[next][start.1] != '#' {
+            row = next;
+        } else {
+            return (row, start.1);
+        }
+    }
+    (row, start.1)
+}
+
+fn part_b(instructions: &Vec<Instruction>, rows: &Vec<Dimension>, cols: &Vec<Dimension>, grid: &Vec<Vec<char>>) {
+
+}
+
+fn cube_stuff(grid: &Vec<Vec<char>>, start: &(usize, usize), num: &usize, dir: &i8,
+              rows: &Vec<Dimension>, cols: &Vec<Dimension>) -> ((usize, usize), i8) {
+
+
+
+    ((0, 0), 0)
 }
