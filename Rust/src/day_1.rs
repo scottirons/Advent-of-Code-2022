@@ -1,6 +1,6 @@
 pub fn solution() {
 
-    let input: Vec<i32> = include_str!("./input.txt")
+    let input: Vec<i32> = include_str!("../../inputs/day_1.txt")
         .split("\n\n")
         .map(|n| {
                 // 83837\n

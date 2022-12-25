@@ -28,6 +28,31 @@ mod day_25;
 
 fn main() {
 
+    day_1::solution();
+    day_2::solution();
+    day_3::solution();
+    day_4::solution();
+    day_5::solution();
+    day_6::solution();
+    day_7::solution();
+    day_8::solution();
+    day_9::solution();
+    day_10::solution();
+    day_11::solution(1);
+    day_11::solution(2);
+    day_12::solution();
+    day_13::solution();
+    day_14::solution();
+    day_15::solution();
+    day_16::solution();
+    day_17::solution();
+    day_18::solution();
+    day_19::solution();
+    day_20::solution();
+    day_21::solution();
+    day_22::solution();
+    day_23::solution();
+    day_24::solution();
     day_25::solution();
 
 }

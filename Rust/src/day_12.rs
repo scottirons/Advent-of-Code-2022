@@ -15,7 +15,7 @@ fn retrace(start: &(usize, usize), end: &(usize, usize), path_map: &HashMap<(usi
     num_steps
 }
 
-pub fn solve() {
+pub fn solution() {
     let mut grid: Vec<Vec<&u8>> = include_str!("../../inputs/day_12.txt").split('\n')
         .map(|n| n.as_bytes().iter().collect())
         .collect();

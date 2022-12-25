@@ -1,5 +1,3 @@
-
-
 pub fn solution() {
 
     let mut total: isize = include_str!("../../inputs/day_25.txt").split('\n')

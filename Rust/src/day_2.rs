@@ -1,6 +1,6 @@
 pub fn solution() {
 
-    let input = include_str!("./input.txt")
+    let input = include_str!("../../inputs/day_2.txt")
         .lines()
         .map(|l| l.split_once(" ").unwrap())
         .map(|(a, b)|
